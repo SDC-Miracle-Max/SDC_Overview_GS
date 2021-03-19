@@ -1,5 +1,6 @@
 const express = require('express')
 const morgan = require('morgan');
+const db = require ('../db/index.js');
 
 const app = express();
 const port = 3000;
@@ -10,14 +11,15 @@ app.use(morgan('dev'));
 //LIST PRODUCTS - GET /products 
 app.get('/products', (req, res) => {
   //query to db
-  if (err) {
-    console.log(err);
-    res.send(500);
-  } else {
-    console.log('success!', data)
-  }
-})
-
+  db.checkConnection((err, data) => {
+    if (err) {
+      console.log(err);
+      res.send(500);
+    } else {
+      console.log('success!', data.rows)
+    }
+  });
+});
 //PRODUCT INFORMATION - GET /products/:product_id
 
 //PRODUCT STYLES - GET /products/:product_id/styles 
