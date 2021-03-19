@@ -8,7 +8,7 @@ const port = 3000;
 app.use(express.json());
 app.use(morgan('dev'));
 
-//LIST PRODUCTS - GET /products 
+//Check connection to database
 app.get('/products', (req, res) => {
   //query to db
   db.checkConnection((err, data) => {
@@ -20,6 +20,9 @@ app.get('/products', (req, res) => {
     }
   });
 });
+
+//LIST PRODUCTS - GET /products 
+
 //PRODUCT INFORMATION - GET /products/:product_id
 
 //PRODUCT STYLES - GET /products/:product_id/styles 
