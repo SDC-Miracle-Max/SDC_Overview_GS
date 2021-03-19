@@ -16,7 +16,7 @@ app.get('/products', (req, res) => {
       console.log(err);
       res.send(500);
     } else {
-      console.log('success!', data.rows)
+      res.send(data.rows);
     }
   });
 });
@@ -24,6 +24,18 @@ app.get('/products', (req, res) => {
 //LIST PRODUCTS - GET /products 
 
 //PRODUCT INFORMATION - GET /products/:product_id
+app.get('/products/:product_id', (req, res) => {
+  const { product_id } = req.params;
+  console.log(product_id);
+  db.getProductInfo((err, data) => {
+    if (err) {
+      console.log(err);
+      res.send(500);
+    } else {
+      res.send(data.rows);
+    }
+  })
+})
 
 //PRODUCT STYLES - GET /products/:product_id/styles 
 
