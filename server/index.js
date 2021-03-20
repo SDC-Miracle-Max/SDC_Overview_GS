@@ -11,10 +11,10 @@ app.use(morgan('dev'));
 //Check connection to database
 app.get('/products', (req, res) => {
   //query to db
-  db.query('SELECT * FROM products WHERE id=1')
+  db.query('SELECT * FROM products')
     .then(data => {
-      console.log(data.rows[0]); 
-      res.send(data.rows[0])
+      // console.log(data.rows[0]); 
+      res.send(200)
     })
     .catch(e => {
       res.send(500);
@@ -37,26 +37,37 @@ app.get('/products', (req, res) => {
 //PRODUCT INFORMATION - GET /products/:product_id
 app.get('/products/:product_id', (req, res) => {
   const { product_id } = req.params;
-  db.getProductInfo(product_id, (err, data) => {
-    if (err) {
-      console.log(err);
-      res.send(500);
-    } else {
+  const sqlCommand = 'SELECT * FROM products WHERE id=($1)';
+  db.query(sqlCommand, [product_id])
+    .then(data => {
       const productInfo = data.rows[0];
-      console.log('productInfo: ', productInfo);
-      db.getProductFeaturesInfo(product_id, (err, data) => {
-        if (err) {
-          console.log(err);
-          res.send(500);
-        } else {
-          const featuresInfo = data.rows[0];
-          console.log('featuresInfo: ', featuresInfo)
-        }
-      })
-
-      res.send(productInfo);
-    }
-  })
+      const sqlCommand = 'SELECT * FROM features WHERE product_id=($1)';
+      db.query(sqlCommand, [product_id])
+        .then (data => console.log(data))
+        .catch (error => console.error(error))
+        // res.send(data.rows[0])
+        res.send(200)
+    })
+    .catch(error => {res.send(500); console.log(error)})
+  // db.getProductInfo(product_id, (err, data) => {
+  //   if (err) {
+  //     console.log(err);
+  //     res.send(500);
+  //   } else {
+  //     const productInfo = data.rows[0];
+  //     console.log('productInfo: ', productInfo);
+  //     db.getProductFeaturesInfo(product_id, (err, data) => {
+  //       if (err) {
+  //         console.log(err);
+  //         res.send(500);
+  //       } else {
+  //         const featuresInfo = data.rows[0];
+  //         console.log('featuresInfo: ', featuresInfo)
+  //       }
+  //     })
+  //     res.send(productInfo);
+  //   }
+  // })
 })
 
 //PRODUCT STYLES - GET /products/:product_id/styles 

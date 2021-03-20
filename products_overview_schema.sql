@@ -87,3 +87,18 @@ CREATE INDEX related_current_product_id_index ON related (current_product_id);
 CREATE INDEX styles_product_id_index ON styles (product_id);
 CREATE INDEX skus_style_id_index ON skus (style_id);
 CREATE INDEX photos_style_id_index ON photos (style_id);
+
+--CREATE ROLE/USER STUDENT
+CREATE USER student WITH PASSWORD 'student';
+
+-- GRANT ACCESS FOR STUDENT USER 
+GRANT ALL ON TABLE products TO student;
+GRANT ALL ON TABLE products_id_seq TO student; 
+GRANT ALL ON TABLE features TO student; 
+GRANT ALL ON TABLE features_product_id_seq TO student;
+GRANT ALL ON TABLE related TO student;
+GRANT ALL ON TABLE related_current_product_id_seq TO student; 
+GRANT ALL ON TABLE styles TO student; 
+GRANT ALL ON TABLE styles_product_id_seq TO student;
+GRANT ALL ON TABLE skus TO student;
+GRANT ALL ON TABLE photos TO student;
