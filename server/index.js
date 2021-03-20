@@ -11,14 +11,25 @@ app.use(morgan('dev'));
 //Check connection to database
 app.get('/products', (req, res) => {
   //query to db
-  db.checkConnection((err, data) => {
-    if (err) {
-      console.log(err);
+  db.query('SELECT * FROM products WHERE id=1')
+    .then(data => {
+      console.log(data.rows[0]); 
+      res.send(data.rows[0])
+    })
+    .catch(e => {
       res.send(500);
-    } else {
-      res.send(data.rows[0]);
-    }
-  });
+      console.error(e.stack)
+    })
+  // db.checkConnection(
+  //   (err, data) => {
+  //   if (err) {
+  //     console.log(err);
+  //     res.send(500);
+  //   } else {
+  //     res.send(data.rows[0]);
+  //   }
+  // }
+  // );
 });
 
 //LIST PRODUCTS - GET /products 
