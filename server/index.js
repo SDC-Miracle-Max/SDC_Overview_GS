@@ -41,48 +41,34 @@ app.get('/products/:product_id', (req, res) => {
   db.query(sqlCommand, [product_id])
     .then(data => {
       const productInfo = data.rows[0];
-      const sqlCommand = 'SELECT * FROM features WHERE product_id=($1)';
+      const sqlCommand = 'SELECT feature, value FROM features WHERE product_id=($1)';
       db.query(sqlCommand, [product_id])
-        .then (data => console.log(data))
-        .catch (error => console.error(error))
-        // res.send(data.rows[0])
-        res.send(200)
+        .then (data => {
+          productInfo['features'] = data.rows;
+          res.send(productInfo);
+        })
+        .catch(err => {console.error(err)}) //HERE IS WHERE WE CAN TO TAKE A LOOK FOR CASES WHERE PRODUCTS DO NOT HAVE FEATURES
     })
-    .catch(error => {res.send(500); console.log(error)})
-  // db.getProductInfo(product_id, (err, data) => {
-  //   if (err) {
-  //     console.log(err);
-  //     res.send(500);
-  //   } else {
-  //     const productInfo = data.rows[0];
-  //     console.log('productInfo: ', productInfo);
-  //     db.getProductFeaturesInfo(product_id, (err, data) => {
-  //       if (err) {
-  //         console.log(err);
-  //         res.send(500);
-  //       } else {
-  //         const featuresInfo = data.rows[0];
-  //         console.log('featuresInfo: ', featuresInfo)
-  //       }
-  //     })
-  //     res.send(productInfo);
-  //   }
-  // })
+    .catch(err => {res.send(500); console.error(err)})
 })
 
 //PRODUCT STYLES - GET /products/:product_id/styles 
 app.get('/products/:product_id/styles', (req, res) => {
   const { product_id } = req.params;
-
-  db.getProductStylesInfo(product_id, (err, data) => {
-    if (err) {
-      console.log(err);
-      res.send(500);
-    } else {
-      console.log(data.rows[0]);``
-      res.send(data.rows[0]);
-    }
-  })
+  const sqlCommand = 'SELECT product_id FROM styles WHERE product_id=($1)'
+  db.query(sqlCommand, [product_id])
+    .then(data => {
+      const stylesInfo = data.rows[0]
+      const sqlCommand = 'SELECT style_id, name, original_price, sale_price, "default?" FROM styles WHERE product_id=($1)';
+      db.query(sqlCommand, [product_id])
+        .then(data => {
+          console.log(data.rows);
+          stylesInfo['results'] = data.rows;
+          res.send(stylesInfo) //LEFT OFF HERE!!! need to add photos and skus
+        })
+        .catch(err => console.error(err.stack));
+    })
+    .catch(err => console.error(err))
 
 
 })

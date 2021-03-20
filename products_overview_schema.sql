@@ -31,7 +31,7 @@ CREATE TABLE styles (
     "name" VARCHAR (500), 
     sale_price VARCHAR (20), 
     original_price VARCHAR (20), 
-    default_style BOOLEAN
+    "default?" BOOLEAN
 );
 
 CREATE TABLE skus (
@@ -64,7 +64,7 @@ FROM '/Users/gretaschock/HackReactor/SDC/SDC_Overview_Data/related.csv'
 DELIMITER ','
 CSV HEADER; 
 
-COPY styles (style_id, product_id, "name", sale_price, original_price, default_style)
+COPY styles (style_id, product_id, "name", sale_price, original_price, "default?")
 FROM '/Users/gretaschock/HackReactor/SDC/SDC_Overview_Data/styles.csv'
 DELIMITER ','
 CSV HEADER;
