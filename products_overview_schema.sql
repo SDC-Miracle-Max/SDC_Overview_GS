@@ -5,7 +5,6 @@ CREATE DATABASE products_overview;
 -- CREATE TABLES
 CREATE TABLE products (
     id SERIAL PRIMARY KEY,
-    -- WHY IS NAME BLUED OUT
     "name" VARCHAR (250),
     slogan VARCHAR (1000),
     "description" VARCHAR (5000),
