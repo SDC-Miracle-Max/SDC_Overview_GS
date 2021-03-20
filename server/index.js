@@ -16,7 +16,7 @@ app.get('/products', (req, res) => {
       console.log(err);
       res.send(500);
     } else {
-      res.send(data.rows);
+      res.send(data.rows[0]);
     }
   });
 });
@@ -26,18 +26,44 @@ app.get('/products', (req, res) => {
 //PRODUCT INFORMATION - GET /products/:product_id
 app.get('/products/:product_id', (req, res) => {
   const { product_id } = req.params;
-  console.log(product_id);
-  db.getProductInfo((err, data) => {
+  db.getProductInfo(product_id, (err, data) => {
     if (err) {
       console.log(err);
       res.send(500);
     } else {
-      res.send(data.rows);
+      const productInfo = data.rows[0];
+      console.log('productInfo: ', productInfo);
+      db.getProductFeaturesInfo(product_id, (err, data) => {
+        if (err) {
+          console.log(err);
+          res.send(500);
+        } else {
+          const featuresInfo = data.rows[0];
+          console.log('featuresInfo: ', featuresInfo)
+        }
+      })
+
+      res.send(productInfo);
     }
   })
 })
 
 //PRODUCT STYLES - GET /products/:product_id/styles 
+app.get('/products/:product_id/styles', (req, res) => {
+  const { product_id } = req.params;
+
+  db.getProductStylesInfo(product_id, (err, data) => {
+    if (err) {
+      console.log(err);
+      res.send(500);
+    } else {
+      console.log(data.rows[0]);``
+      res.send(data.rows[0]);
+    }
+  })
+
+
+})
 
 //RELATED PRODUCTS - GET /products/:product_id/related 
 
