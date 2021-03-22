@@ -25,22 +25,36 @@ app.get('/products', (req, res) => {
 //LIST PRODUCTS - GET /products 
 
 //PRODUCT INFORMATION - GET /products/:product_id
+// app.get('/products/:product_id', (req, res) => {
+//   const { product_id } = req.params;
+//   const sqlCommand = 'SELECT * FROM products WHERE id=($1)';
+//   db.query(sqlCommand, [product_id])
+//     .then(data => {
+//       const productInfo = data.rows[0];
+//       const sqlCommand = 'SELECT feature, value FROM features WHERE product_id=($1)';
+//       db.query(sqlCommand, [product_id])
+//         .then (data => {
+//           productInfo['features'] = data.rows;
+//           res.send(productInfo);
+//         })
+//         .catch(err => {console.error(err)}) //HERE IS WHERE WE CAN TO TAKE A LOOK FOR CASES WHERE PRODUCTS DO NOT HAVE FEATURES
+//     })
+//     .catch(err => {res.send(500); console.error(err)})
+// })
+
+const nestQuery = (query) => {
+  return `coalesce((SELECT array_to_json(array_agg(row_to_json(x))) FROM (${query}) x ),'[]')`;
+}
+
 app.get('/products/:product_id', (req, res) => {
   const { product_id } = req.params;
-  const sqlCommand = 'SELECT * FROM products WHERE id=($1)';
+  const sqlCommandFeatures = `SELECT * FROM features WHERE product_id=($1)`;
+  const sqlCommand = `SELECT p.id, p.name, p.slogan, p.description, p.category, p.default_price, ${nestQuery(sqlCommandFeatures)} FROM products p  WHERE id=($1)`;
   db.query(sqlCommand, [product_id])
-    .then(data => {
-      const productInfo = data.rows[0];
-      const sqlCommand = 'SELECT feature, value FROM features WHERE product_id=($1)';
-      db.query(sqlCommand, [product_id])
-        .then (data => {
-          productInfo['features'] = data.rows;
-          res.send(productInfo);
-        })
-        .catch(err => {console.error(err)}) //HERE IS WHERE WE CAN TO TAKE A LOOK FOR CASES WHERE PRODUCTS DO NOT HAVE FEATURES
-    })
-    .catch(err => {res.send(500); console.error(err)})
+    .then (data => res.send(data.rows[0]))
+    .catch(console.log);
 })
+
 
 //PRODUCT STYLES - GET /products/:product_id/styles 
 app.get('/products/:product_id/styles', (req, res) => {
@@ -53,10 +67,25 @@ app.get('/products/:product_id/styles', (req, res) => {
       db.query(sqlCommand_Styles, [product_id])
         .then(data => {
           stylesInfo['results'] = data.rows;
-          console.log('current style object: ', stylesInfo);
-          con
-          db.query()
-          res.send(stylesInfo) //LEFT OFF HERE!!! need to add photos and skus
+          console.log('current style object: ', stylesInfo.results);
+          for (var styleObj of stylesInfo.results) {
+            // console.log(styleObj)
+            const sqlCommand_photos = 'SELECT thumbnail_url, url FROM photos WHERE style_id=($1)';
+            db.query(sqlCommand_photos, [styleObj.style_id])
+              .then(data => {
+                console.log(data.rows);
+                styleObj['photos'] = data.rows;
+              })
+            
+            // const sqlCommand_skus = 
+
+            res.send(stylesInfo) //LEFT OFF HERE!!! need to add photos and skus
+          }
+
+
+
+
+
         })
         .catch(err => console.error(err.stack));
     })
@@ -64,6 +93,11 @@ app.get('/products/:product_id/styles', (req, res) => {
 
 
 })
+
+
+
+
+
 
 //RELATED PRODUCTS - GET /products/:product_id/related 
 
