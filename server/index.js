@@ -20,16 +20,6 @@ app.get('/products', (req, res) => {
       res.send(500);
       console.error(e.stack)
     })
-  // db.checkConnection(
-  //   (err, data) => {
-  //   if (err) {
-  //     console.log(err);
-  //     res.send(500);
-  //   } else {
-  //     res.send(data.rows[0]);
-  //   }
-  // }
-  // );
 });
 
 //LIST PRODUCTS - GET /products 
@@ -55,15 +45,17 @@ app.get('/products/:product_id', (req, res) => {
 //PRODUCT STYLES - GET /products/:product_id/styles 
 app.get('/products/:product_id/styles', (req, res) => {
   const { product_id } = req.params;
-  const sqlCommand = 'SELECT product_id FROM styles WHERE product_id=($1)'
-  db.query(sqlCommand, [product_id])
+  const sqlCommandStyles_ProductId = 'SELECT product_id FROM styles WHERE product_id=($1)'
+  db.query(sqlCommandStyles_ProductId, [product_id])
     .then(data => {
       const stylesInfo = data.rows[0]
-      const sqlCommand = 'SELECT style_id, name, original_price, sale_price, "default?" FROM styles WHERE product_id=($1)';
-      db.query(sqlCommand, [product_id])
+      const sqlCommand_Styles = 'SELECT style_id, name, original_price, sale_price, "default?" FROM styles WHERE product_id=($1)';
+      db.query(sqlCommand_Styles, [product_id])
         .then(data => {
-          console.log(data.rows);
           stylesInfo['results'] = data.rows;
+          console.log('current style object: ', stylesInfo);
+          con
+          db.query()
           res.send(stylesInfo) //LEFT OFF HERE!!! need to add photos and skus
         })
         .catch(err => console.error(err.stack));

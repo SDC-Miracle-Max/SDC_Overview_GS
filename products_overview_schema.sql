@@ -4,7 +4,7 @@ CREATE DATABASE products_overview;
 
 -- CREATE TABLES
 CREATE TABLE products (
-    id SERIAL PRIMARY KEY,
+    id SERIAL NOT NULL PRIMARY KEY,
     "name" VARCHAR (250),
     slogan VARCHAR (1000),
     "description" VARCHAR (5000),
@@ -13,21 +13,21 @@ CREATE TABLE products (
 );
 
 CREATE TABLE features (
-    feature_id INT PRIMARY KEY,
-    product_id SERIAL REFERENCES products (id), 
+    feature_id SERIAL NOT NULL PRIMARY KEY,
+    product_id INT NOT NULL REFERENCES products (id), 
     feature VARCHAR (250), 
     "value" VARCHAR (250)
 );
 
 CREATE TABLE related (
-    related_id INT PRIMARY KEY, 
-    current_product_id SERIAL REFERENCES products (id), 
+    related_id SERIAL NOT NULL PRIMARY KEY, 
+    current_product_id INT NOT NULL REFERENCES products (id), 
     related_product_id INT
 );
 
 CREATE TABLE styles (
-    style_id INT PRIMARY KEY, 
-    product_id SERIAL REFERENCES products (id), 
+    style_id SERIAL NOT NULL PRIMARY KEY, 
+    product_id INT NOT NULL REFERENCES products (id), 
     "name" VARCHAR (500), 
     sale_price VARCHAR (20), 
     original_price VARCHAR (20), 
@@ -35,15 +35,15 @@ CREATE TABLE styles (
 );
 
 CREATE TABLE skus (
-    skus_id INT PRIMARY KEY, 
-    style_id INT REFERENCES styles (style_id), 
+    skus_id SERIAL NOT NULL PRIMARY KEY, 
+    style_id INT NOT NULL REFERENCES styles (style_id), 
     size VARCHAR (100), 
     quantity INT
 );
 
 CREATE TABLE photos (
-    photo_id INT PRIMARY KEY, 
-    style_id INT REFERENCES styles (style_id), 
+    photo_id SERIAL NOT NULL PRIMARY KEY, 
+    style_id INT NOT NULL REFERENCES styles (style_id), 
     "url" VARCHAR, 
     thumbnail_url VARCHAR
 );
