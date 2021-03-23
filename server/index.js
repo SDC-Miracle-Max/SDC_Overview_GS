@@ -32,51 +32,84 @@ const nestQuery = (query) => {
 app.get('/products/:product_id', (req, res) => {
   const { product_id } = req.params;
   const sqlCommandFeatures = `SELECT * FROM features WHERE product_id=($1)`;
-  const sqlCommand = `SELECT p.id, p.name, p.slogan, p.description, p.category, p.default_price, ${nestQuery(sqlCommandFeatures)} FROM products p WHERE id=($1)`;
+  const sqlCommand = `SELECT p.id, p.name, p.slogan, p.description, p.category, p.default_price, ${nestQuery(sqlCommandFeatures)} AS features FROM products p WHERE id=($1)`;
+
   db.query(sqlCommand, [product_id])
     .then (data => res.send(data.rows[0]))
     .catch(console.log);
 })
 
-
-//PRODUCT STYLES - GET /products/:product_id/styles 
 app.get('/products/:product_id/styles', (req, res) => {
   const { product_id } = req.params;
-  const sqlCommandStyles_ProductId = 'SELECT product_id FROM styles WHERE product_id=($1)'
-  db.query(sqlCommandStyles_ProductId, [product_id])
-    .then(data => {
-      const stylesInfo = data.rows[0]
-      const sqlCommand_Styles = 'SELECT style_id, name, original_price, sale_price, "default?" FROM styles WHERE product_id=($1)';
-      db.query(sqlCommand_Styles, [product_id])
-        .then(data => {
-          stylesInfo['results'] = data.rows;
-          console.log('current style object: ', stylesInfo.results);
-          for (var styleObj of stylesInfo.results) {
-            // console.log(styleObj)
-            const sqlCommand_photos = 'SELECT thumbnail_url, url FROM photos WHERE style_id=($1)';
-            db.query(sqlCommand_photos, [styleObj.style_id])
-              .then(data => {
-                console.log(data.rows);
-                styleObj['photos'] = data.rows;
-              })
-            
-            // const sqlCommand_skus = 
-
-            res.send(stylesInfo) //LEFT OFF HERE!!! need to add photos and skus
-          }
-
-
-
-
-
+  const sqlCommandStyles = `SELECT style_id, name, original_price, sale_price, "default?" FROM styles WHERE product_id=($1)`
+  const sqlCommand =`SELECT id AS product_id, ${nestQuery(sqlCommandStyles)} AS results FROM products WHERE id=($1)`;
+  const final = [];
+  db.query(sqlCommand, [product_id])
+    .then((stylesData) => {
+      const stylesResultsArr = stylesData.rows[0].results;
+      // console.log(stylesResultsArr);
+      stylesResultsArr.map(styleObj => {
+        console.log(styleObj.style_id)
+        const style_id = styleObj.style_id;
+        const sqlCommandPhotos = `SELECT * FROM photos WHERE style_id=($1)`;
+        db.query(sqlCommandPhotos, [style_id])
+          .then(results => {
+            console.log('---------------------------------------------------------------------------------------------------------')
+            console.log(styleObj.style_id)
+            // console.log(results.rows);
+            styleObj['photos'] = results.rows;
+            console.log(styleObj)
+          })
+          .catch(console.log)
         })
-        .catch(err => console.error(err.stack));
+        console.log(final)
+        res.send(stylesData.rows[0])
+      })
+    .catch(err => {
+      console.log(err);
+      res.send(500);
     })
-    .catch(err => console.error(err))
-
-
 })
 
+//PRODUCT STYLES - GET /products/:product_id/styles 
+// app.get('/products/:product_id/styles', (req, res) => {
+//   const { product_id } = req.params; 
+//   const sqlCommandStyles = `SELECT style_id, name, original_price, sale_price, "default?" FROM styles WHERE product_id=($1)`
+//   const sqlCommand =`SELECT id AS product_id, ${nestQuery(sqlCommandStyles)} AS results FROM products WHERE id=($1)`;
+//   db.query(sqlCommand, [product_id])
+//     .then(data => {
+//       // console.log(data.rows[0].results)
+//       const resultArr = [];
+//       for (var i = 0; i < data.rows[0].results.length; i++){
+//         const styleObj = data.rows[0].results[i];
+//       // for (var styleObj of data.rows[0].results) {
+//         console.log("outside of query: ", styleObj.style_id)
+//         var sqlCommandPhotos = `SELECT * FROM photos WHERE style_id=${styleObj.style_id}`;
+//         // const secondSqlCommand = `SELECT ${nestQuery(sqlCommandPhotos)} AS photos FROM photos WHERE style_id=($1)`;
+//         const promise = db.query(sqlCommandPhotos)
+//         // db.query(sqlCommandPhotos, [styleObj.style_id])
+//           .then(data1 => {
+//             // console.log(data1)
+//             console.log('inside of query: ', styleObj.style_id)
+//             styleObj['photos'] = data1.rows;
+//             // console.log(styleObj)
+//             // res.send(styleObj)
+//             // console.log(styleObj)
+//             return styleObj;
+//           })
+//           .catch(console.log);
+//           resultArr.push(promise)
+//       }
+//       // res.send(styleObj)
+//       console.log(resultArr)
+//       return Promise.all(resultArr);
+//     })
+//     .then((resultArr) => {
+//       res.send(resultArr)
+//     })
+//     // .then(result => res.send(result))
+//     .catch(console.log)
+// })
 
 
 
