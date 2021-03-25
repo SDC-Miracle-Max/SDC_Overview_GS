@@ -2,13 +2,17 @@ import http from 'k6/http';
 
 
 export default function () {
-    // const urlProductInfo = 'http://localhost:3000/products/1';
-    // http.get(urlProductInfo);
+    // var res = http.get('http://localhost:3000/products/')
+    // console.log('Response time for connection to Products was ' + String(res.timings.duration) + ' ms');
 
-    // const urlStylesInfo = 'http://localhost:3000/products/1/styles';
-    // http.get(urlStylesInfo);
+    // var res = http.get('http://localhost:3000/products/1')
+    // console.log('Response time for Product Info-General API was ' + String(res.timings.duration) + ' ms');
 
-    const urlRelatedIno = 'http://localhost:3000/products/1/related';
-    http.get(urlRelatedIno);
+    // var res = http.get('http://localhost:3000/products/1/styles')
+    // console.log('Response time for Product Info-Styles API was ' + String(res.timings.duration) + ' ms');
+
+    var res = http.get('http://localhost:3000/products/1/related')
+    console.log('Response time for Product Info-Related API was ' + String(res.timings.duration) + ' ms');
+
 }
 
