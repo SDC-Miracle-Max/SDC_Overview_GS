@@ -1,12 +1,12 @@
 const express = require('express')
-const morgan = require('morgan');
+// const morgan = require('morgan');
 const db = require ('../db/index.js');
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
-app.use(morgan('dev'));
+// app.use(morgan('dev'));
 
 //Check connection to database
 app.get('/products', (req, res) => {
