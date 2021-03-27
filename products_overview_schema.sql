@@ -48,37 +48,6 @@ CREATE TABLE photos (
     thumbnail_url VARCHAR
 );
 
--- COPY OVER INFORMATION FROM .CSV FILES
-COPY products (id, "name", slogan, "description", category, default_price)
-FROM '/Users/gretaschock/HackReactor/SDC/SDC_Overview_Data/product.csv'
-DELIMITER ','
-CSV HEADER;
-
-COPY features (feature_id, product_id, feature, "value")
-FROM '/Users/gretaschock/HackReactor/SDC/SDC_Overview_Data/features.csv'
-DELIMITER ','
-CSV HEADER; 
-
-COPY related (related_id, current_product_id, related_product_id)
-FROM '/Users/gretaschock/HackReactor/SDC/SDC_Overview_Data/related.csv'
-DELIMITER ','
-CSV HEADER; 
-
-COPY styles (style_id, product_id, "name", sale_price, original_price, "default?")
-FROM '/Users/gretaschock/HackReactor/SDC/SDC_Overview_Data/styles.csv'
-DELIMITER ','
-CSV HEADER;
-
-COPY skus (skus_id, style_id, size, quantity)
-FROM '/Users/gretaschock/HackReactor/SDC/SDC_Overview_Data/skus.csv'
-DELIMITER ','
-CSV HEADER;
-
-COPY photos (photo_id, style_id, "url", thumbnail_url)
-FROM '/Users/gretaschock/HackReactor/SDC/SDC_Overview_Data/photos.csv'
-DELIMITER ','
-CSV HEADER;
-
 
 -- CREATE INDEXES FOR EACH TABLES
 CREATE INDEX products_id_index ON products (id);
@@ -88,17 +57,4 @@ CREATE INDEX styles_product_id_index ON styles (product_id);
 CREATE INDEX skus_style_id_index ON skus (style_id);
 CREATE INDEX photos_style_id_index ON photos (style_id);
 
---CREATE ROLE/USER STUDENT
-CREATE USER student WITH PASSWORD 'student';
 
--- GRANT ACCESS FOR STUDENT USER 
-GRANT ALL ON TABLE products TO student;
-GRANT ALL ON TABLE products_id_seq TO student; 
-GRANT ALL ON TABLE features TO student; 
-GRANT ALL ON TABLE features_product_id_seq TO student;
-GRANT ALL ON TABLE related TO student;
-GRANT ALL ON TABLE related_current_product_id_seq TO student; 
-GRANT ALL ON TABLE styles TO student; 
-GRANT ALL ON TABLE styles_product_id_seq TO student;
-GRANT ALL ON TABLE skus TO student;
-GRANT ALL ON TABLE photos TO student;
